@@ -1,0 +1,72 @@
+#Disables BitLocker.
+manage-bde -off C:
+Write-Host "BitLocker is now disabled." 
+
+#Enables system restore, sets percental size to 5%.
+Enable-ComputerRestore -Drive C:
+vssadmin resize shadowstorage /for=C: /on=C: /maxsize=5%
+Write-Host "System Restore enabled, and set to 5%!"
+
+#Enables BitLocker, uses TPM and creates recovery password.
+Enable-BitLocker -MountPoint "C:" -EncryptionMethod Aes128 -SkipHardwareTest -UsedSpaceOnly -RecoveryPasswordProtector
+Write-Host "BitLocker is now enabled." 
+
+#Changes what closing the lid does to nothing. 
+powercfg /setacvalueindex scheme_current sub_buttons lidaction 0
+powercfg /setacvalueindex scheme_current sub_buttons lidaction 0
+powercfg /setactive scheme_current 
+powercfg /change monitor-timeout-ac 20
+powercfg /change monitor-timeout-dc 20
+powercfg /change standby-timeout-dc 30
+powercfg /change standby-timeout-ac 0
+Write-Host "Lid settings have been configured."
+
+#Creates new user profile.
+$firstname = Read-Host "Enter the user's first name."
+$password = Read-Host -AsSecureString "Enter the user's password."
+New-LocalUser $firstname -Password $password -Description "A user account."
+Add-LocalGroupMember -Group "Users" -Member $firstname
+
+#Determines wether or not user needs admin.
+$adminstatus = Read-Host "Does" $firstname "need admin rights? [Y/N]"
+switch($adminstatus){
+          Y{Add-LocalGroupMember -Group "Administrators" -Member $firstname}
+    default{Write-Warning "Invalid input!"}
+    }
+Write-Host "The new user account has been created." 
+
+#Renames computer.
+$pcname = Read-Host "Input computer name."
+Rename-Computer -NewName $pcname
+Write-Host "The computer has been renamed."
+
+#Gets Windows key for activation. 
+wmic path SoftwareLicensingService get 0A3xOriginalProductKey
+Write-Host "Windows key received." 
+
+#Checks BitLocker status and saves BitLocker key to USB.
+manage-bde -status
+manage-bde -protectors -get C: > D:\BitLockerRecoveryKeys\${Username}BitlockerRecoverykey.txt
+Write-Host "BitLocker key file saved."
+
+#Installs SupportAssist
+Write-Host "Beginning SupportAssist download procedure."
+"D:\EzoicSupportAssist\SupportAssistx64.exe" TRANSFORMS="D:\EzoicSupportAssist\SupportAssistConfig.mst" DEPLOYMENTKEY="L1326T3r$&" | cmd
+Write-Host "SupportAssist has been installed." 
+
+#Downloads and installs all Windows updates.
+Write-Host "Beginning Windows Update procedure." 
+Install-Module PSWindowsUpdate
+Get-WindowsUpdate 
+Install-WindowsUpdate
+Write-Host "Windows Update procedure complete."
+
+Write-Host "Changing ExecutionPolicy to Restricted!"
+Set-ExecutionPolicy Restricted
+
+$power = Read-Host "Are you ready to restart the computer now? [Y/N]"
+switch($power){
+    Y{Restart-Computer -Force -Confirm:$false}
+    N{Exit}
+    default{write-warning "Invalid Input"}
+    }
