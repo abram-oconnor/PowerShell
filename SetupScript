@@ -1,5 +1,6 @@
 
 try{
+
 #Disables BitLocker.
 manage-bde -off C:
 Write-Host "BitLocker is now disabled."
