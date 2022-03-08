@@ -10,6 +10,7 @@ Write-Host "BitLocker is now disabled."
 catch{Write-Host "BitLocker disable failed."}
 
 try{
+
 #Enables system restore, sets percental size to 5%.
 Enable-ComputerRestore -Drive C:
 vssadmin resize shadowstorage /for=C: /on=C: /maxsize=5%
