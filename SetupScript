@@ -1,6 +1,6 @@
-#Disables BitLocker.
-try{
 
+try{
+#Disables BitLocker.
 manage-bde -off C:
 Write-Host "BitLocker is now disabled."
 
@@ -8,9 +8,8 @@ Write-Host "BitLocker is now disabled."
 
 catch{Write-Host "BitLocker disable failed."}
 
-#Enables system restore, sets percental size to 5%.
 try{
-
+#Enables system restore, sets percental size to 5%.
 Enable-ComputerRestore -Drive C:
 vssadmin resize shadowstorage /for=C: /on=C: /maxsize=5%
 Write-Host "System Restore enabled, and set to 5%!"
