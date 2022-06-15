@@ -1,5 +1,7 @@
 
-try{
+try
+
+{
 
 #Disables BitLocker.
 manage-bde -off C:
@@ -7,9 +9,17 @@ Write-Host "BitLocker is now disabled."
 
 } 
 
-catch{Write-Host "BitLocker disable failed."}
+catch
 
-try{
+{
+
+Write-Host "BitLocker disable failed."
+
+}
+
+try
+
+{
 
 #Enables system restore, sets percental size to 5%.
 Enable-ComputerRestore -Drive C:
@@ -18,9 +28,17 @@ Write-Host "System Restore enabled, and set to 5%!"
 
 }
 
-catch{Write-Host "System Restore enable failed."}
+catch
 
-try{
+{
+
+Write-Host "System Restore enable failed."
+
+}
+
+try
+
+{
 
 #Enables BitLocker, uses TPM and creates recovery password.
 Enable-BitLocker -MountPoint "C:" -EncryptionMethod Aes128 -SkipHardwareTest -UsedSpaceOnly -RecoveryPasswordProtector
@@ -28,9 +46,17 @@ Write-Host "BitLocker is now enabled."
 
 }
 
-catch{Write-Host "BitLocker enable failed."}
+catch
 
-try{
+{
+
+Write-Host "BitLocker enable failed."
+
+}
+
+try
+
+{
 
 #Changes what closing the lid does to nothing. 
 powercfg /setacvalueindex scheme_current sub_buttons lidaction 0
@@ -44,9 +70,17 @@ Write-Host "Lid settings have been configured."
 
 }
 
-catch{Write-Host "Lid settings configuration failed."}
+catch
 
-try{
+{
+
+Write-Host "Lid settings configuration failed."
+
+}
+
+try
+
+{
 
 #Creates new user profile.
 $firstname = Read-Host "Enter the user's first name."
@@ -64,9 +98,17 @@ Write-Host "The new user account has been created."
 
 }
 
-catch{Write-Host "Failed to create new user account"} 
+catch
 
-try{
+{
+
+Write-Host "Failed to create new user account"
+
+} 
+
+try
+
+{
 
 #Renames computer.
 $pcname = Read-Host "Input computer name."
@@ -75,9 +117,17 @@ Write-Host "The computer has been renamed."
 
 }
 
-catch{Write-Host "Computer rename failed."}
+catch
 
-try{
+{
+
+Write-Host "Computer rename failed."
+
+}
+
+try
+
+{
 
 #Gets Windows key for activation. 
 wmic path SoftwareLicensingService get 0A3xOriginalProductKey
@@ -85,9 +135,17 @@ Write-Host "Windows key received."
 
 }
 
-catch{Write-Host "Windows key registration failed."}
+catch
 
-try{
+{
+
+Write-Host "Windows key registration failed."
+
+}
+
+try
+
+{
 
 #Checks BitLocker status and saves BitLocker key to USB.
 manage-bde -status
@@ -96,9 +154,17 @@ Write-Host "BitLocker key file saved."
 
 }
 
-catch{Write-Host "Failed to save BitLocker key."}
+catch
 
-try{
+{
+
+Write-Host "Failed to save BitLocker key."
+
+}
+
+try
+
+{
 
 #Installs SupportAssist by launching CMD as Admin    
 Write-Host "Beginning SupportAssist download procedure."
@@ -107,9 +173,17 @@ Write-Host "SupportAssist has been installed."
 
 }
 
-catch{Write-Host "SupportAssist install has failed."}
+catch
 
-try{
+{
+
+Write-Host "SupportAssist install has failed."
+
+}
+
+try
+
+{
 
 #Downloads and installs all Windows updates.
 Write-Host "Beginning Windows Update procedure." 
@@ -120,9 +194,17 @@ Write-Host "Windows Update procedure complete."
 
 }
 
-catch{Write-Host "Windows Updates failed."}
+catch
 
-try{
+{
+
+Write-Host "Windows Updates failed."
+
+}
+
+try
+
+{
 
 Write-Host "Changing ExecutionPolicy to Restricted!"
 Set-ExecutionPolicy Restricted
@@ -136,4 +218,10 @@ switch($power){
 
 }
 
-catch{Write-Host "Restart PC failed."}
+catch
+
+{
+
+Write-Host "Restart PC failed."
+
+}
